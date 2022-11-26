@@ -1,0 +1,8 @@
+{
+    "App_id": 2,
+    "datasource": "datasets/aarhus_libraryEvents.csv",
+    "protocol": "MQTT",
+    "target": "test.mosquitto.org",
+    "MQTT_topic": "A very distinctive, creative and most importantly unique mqtt topic",
+    "frequency": 30
+}
