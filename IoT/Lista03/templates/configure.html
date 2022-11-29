@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generators Configuration</title>
+</head>
+<body>
+    <h1>Configuration Page</h1>
+
+    <form method="post" action="">
+        {{ form.csrf_token }}
+        {{ form.generator_id.label }} {{ form.generator_id }} <br> <br>
+        {{ form.datasource.label }} {{ form.datasource }} <br> <br>
+        {{ form.protocol.label }} {{ form.protocol }} <br> <br>
+        {{ form.target.label }} {{ form.target }} <br> <br>
+        {{ form.mqtt_topic.label }} {{ form.mqtt_topic }} <br> <br>
+        {{ form.frequency.label }} {{ form.frequency }} <br> <br>
+        {{ form.is_active.label }} {{ form.is_active }} <br> <br>
+        {{ form.submit }}
+    </form>
+</body>
+</html>

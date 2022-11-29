@@ -4,5 +4,6 @@
     "protocol": "HTTP",
     "target": "http://localhost:5000/fileupload/",
     "MQTT_topic": "",
-    "frequency": 60
+    "frequency": 60,
+    "is_active": "True"
 }

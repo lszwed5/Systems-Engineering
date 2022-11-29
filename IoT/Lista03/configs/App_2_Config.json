@@ -4,5 +4,6 @@
     "protocol": "MQTT",
     "target": "test.mosquitto.org",
     "MQTT_topic": "A very distinctive, creative and most importantly unique mqtt topic",
-    "frequency": 30
+    "frequency": 30,
+    "is_active": "True"
 }
