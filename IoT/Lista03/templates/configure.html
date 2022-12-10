@@ -2,21 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Generators Configuration</title>
+    <!-- <script>
+        setTimeout(function(){
+            window.location.reload();
+            }, 2000);
+    </script> -->
 </head>
-<body>
-    <h1>Configuration Page</h1>
-
-    <form method="post" action="">
-        {{ form.csrf_token }}
-        {{ form.generator_id.label }} {{ form.generator_id }} <br> <br>
-        {{ form.datasource.label }} {{ form.datasource }} <br> <br>
-        {{ form.protocol.label }} {{ form.protocol }} <br> <br>
-        {{ form.target.label }} {{ form.target }} <br> <br>
-        {{ form.mqtt_topic.label }} {{ form.mqtt_topic }} <br> <br>
-        {{ form.frequency.label }} {{ form.frequency }} <br> <br>
-        {{ form.is_active.label }} {{ form.is_active }} <br> <br>
-        {{ form.submit }}
-    </form>
+<body class="bg-black bg-cover height-auto text-slate-300">
+    <a href="{{ url_for('home') }}"><button class="absolute top-0 ml-2 mt-2 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Home</button></a>
+    <div>
+        <div class="grid justify-center text-6xl mt-6">
+            <h1>Configuration Page</h1>
+        </div>
+    
+        <div class="grid object-center bg-cover m-auto justify-center mt-16 mb-16">
+            <form method="post" action="" class="grid justify-center w-full">
+                {{ form.csrf_token }}
+                {{ form.generator_id.label(class="grid justify-center mb-3") }}
+                {{ form.generator_id(class="rounded-md min-w-60 text-black text-center") }} <br>
+                {{ form.datasource.label(class="grid justify-center mb-3") }}
+                {{ form.datasource(class="rounded-md text-black text-center") }} <br>
+                {{ form.protocol.label(class="grid justify-center mb-3") }}
+                {{ form.protocol(class="rounded-md text-black text-center") }} <br>
+                {{ form.target.label(class="grid justify-center mb-3") }}
+                {{ form.target(class="rounded-md text-black text-center") }} <br>
+                {{ form.mqtt_topic.label(class="grid justify-center mb-3") }}
+                {{ form.mqtt_topic(class="rounded-md text-black text-center") }} <br>
+                {{ form.frequency.label(class="grid justify-center mb-3") }}
+                {{ form.frequency(class="rounded-md text-black text-center") }} <br>
+                {{ form.is_active.label(class="grid justify-center mb-3") }}
+                {{ form.is_active(class="rounded-md text-black text-center") }} <br>
+                {{ form.submit(class="mx-auto bg-[#006913] rounded-md py-3 w-2/3 hover:bg-[#00911b] hover:cursor-pointer") }}
+            </form>
+        </div>
+    </div>
 </body>
 </html>

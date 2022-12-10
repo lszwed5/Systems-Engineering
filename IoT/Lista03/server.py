@@ -1,21 +1,24 @@
-import sys
+import requests
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, StringField, IntegerField, FileField, BooleanField
+from wtforms import SelectField, SubmitField, StringField, IntegerField, BooleanField
 from wtforms.validators import InputRequired
 import json
-from subprocess import Popen
+import threading
+from middleman import main
+
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.config['SECRET_KEY'] = 'thisisasecretkey'
-RECONFIG_PATH = "configs/reconfiguration.json"
 ACTIVE_GENERATORS = {}
+CONFIGURATIONS = {}
+CONNECTED_GENERATORS = {}
 
 
 class ConfigureForm(FlaskForm):
 
-    generator_id = SelectField(u'Generator ID: ', choices=[1, 2, 3, 4, 5], coerce=int)
+    generator_id = SelectField(u'Generator ID: ', choices=CONNECTED_GENERATORS.keys())
 
     datasource = StringField('Source of data: ', validators=[InputRequired()])
 
@@ -32,13 +35,35 @@ class ConfigureForm(FlaskForm):
     submit = SubmitField('Apply')
 
 
-def rerun_generator_app(app_path, config_path):
-    return Popen([sys.executable, app_path, config_path])
-
-
 @app.route("/")
 def index():
-    return redirect(url_for('configure'))
+    return redirect(url_for('home'))
+
+
+@app.route("/home/")
+def home():
+    return render_template('index.html',
+                           data={"active_generators": ACTIVE_GENERATORS, "configurations": CONFIGURATIONS})
+
+
+@app.route('/register/', methods=["POST"])
+def register():
+    if request.method == 'POST':
+        data = json.loads(request.json)
+        CONNECTED_GENERATORS[data["Generator name"]] = data["Configuration URL"]
+        CONFIGURATIONS[data["Generator name"]] = {
+            "App_id": data["Generator name"],
+            "Configuration URL": data["Configuration URL"],
+            "datasource": None,
+            "protocol": None,
+            "target": None,
+            "MQTT_topic": None,
+            "frequency": None,
+            "is_active": False
+        }
+        print(CONNECTED_GENERATORS)
+
+    return "Connected successfully"
 
 
 @app.route("/fileupload/<src>", methods=["POST"])
@@ -66,13 +91,29 @@ def getfile(file_nr):
     return jsonify(data)
 
 
-@app.route("/configuration/", methods=['GET', 'POST'])
-def configure():
+@app.route("/configuration/<id_>", methods=['GET', 'POST'])
+def configure(id_):
     form = ConfigureForm()
+
+    if id_ != 'all':
+        form.generator_id.choices = [id_]
+        print(CONFIGURATIONS)
+        if CONFIGURATIONS[str(id_)]["datasource"]:
+            form.datasource.default = CONFIGURATIONS[str(id_)]["datasource"]
+        if CONFIGURATIONS[str(id_)]["protocol"]:
+            form.protocol.default = CONFIGURATIONS[str(id_)]["protocol"]
+        if CONFIGURATIONS[str(id_)]["target"]:
+            form.target.default = CONFIGURATIONS[str(id_)]["target"]
+        if CONFIGURATIONS[str(id_)]["MQTT_topic"]:
+            form.mqtt_topic.default = CONFIGURATIONS[str(id_)]["MQTT_topic"]
+        if CONFIGURATIONS[str(id_)]["frequency"]:
+            form.frequency.default = CONFIGURATIONS[str(id_)]["frequency"]
+        form.is_active.default = CONFIGURATIONS[str(id_)]["is_active"]
 
     if form.validate_on_submit():
         configuration = {
             "App_id": form.generator_id.data,
+            "Configuration URL": CONNECTED_GENERATORS['App1'],
             "datasource": form.datasource.data,
             "protocol": form.protocol.data,
             "target": form.target.data,
@@ -80,25 +121,17 @@ def configure():
             "frequency": form.frequency.data,
             "is_active": form.is_active.data
         }
+
+        send = requests.post(configuration["Configuration URL"], json=json.dumps(configuration))
+        print(send.text)
         # print(configuration)
 
-        generator_name = f'App{configuration["App_id"]}.py'
+        CONFIGURATIONS[str(configuration["App_id"])] = configuration
 
-        with open(RECONFIG_PATH, "w", encoding='utf-8') as f:
-            json.dump(configuration, f, indent=4)
-
-        if configuration["is_active"]:
-            if str(configuration["App_id"]) in ACTIVE_GENERATORS.keys():
-                ACTIVE_GENERATORS[str(configuration["App_id"])].kill()
-                ACTIVE_GENERATORS[str(configuration["App_id"])] = rerun_generator_app(generator_name, RECONFIG_PATH)
-            else:
-                ACTIVE_GENERATORS[str(configuration["App_id"])] = rerun_generator_app(generator_name, RECONFIG_PATH)
-        else:
-            if str(configuration["App_id"]) in ACTIVE_GENERATORS.keys():
-                ACTIVE_GENERATORS[str(configuration["App_id"])].kill()
-
+        # return redirect(url_for('home'))
         return redirect(url_for('successful'))
 
+    form.process()
     # print(form.errors)
     return render_template('configure.html', form=form)
 
@@ -109,4 +142,6 @@ def successful():
 
 
 if __name__ == '__main__':
+    t1 = threading.Thread(target=main, daemon=True)
+    t1.start()
     app.run(debug=True)

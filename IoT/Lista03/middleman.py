@@ -25,8 +25,13 @@ def on_message(client, userdata, message):
     print(to_server.text)
 
 
-client.loop_start()
-client.subscribe(topic)
-client.on_message = on_message
-while True:
-    time.sleep(1)
+def main():
+    client.loop_start()
+    client.subscribe(topic)
+    client.on_message = on_message
+    while True:
+        time.sleep(1)
+
+
+if __name__ == "__main__":
+    main()

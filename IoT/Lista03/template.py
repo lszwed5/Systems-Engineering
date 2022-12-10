@@ -1,4 +1,6 @@
 import csv
+import ctypes
+import threading
 import json
 import requests
 import paho.mqtt.client as mqtt
@@ -6,12 +8,16 @@ import paho.mqtt.client as mqtt
 
 class App:
     """A template for IoT L3 application"""
+
     def __init__(self):
         self.settings = None
 
-    def configure(self, filename):
+    def configure_from_file(self, filename):
         with open(filename, "r") as f:
             self.settings = json.load(f)
+
+    def configure(self, json_data):
+        self.settings = json_data
 
     def get_data(self):
         source = self.settings["datasource"]
@@ -46,3 +52,39 @@ class App:
                 client.connect(broker, 1883)
                 client.publish(topic, str(data) + f"${self.settings['App_id']}")
                 client.disconnect()
+
+
+class ThreadWithException(threading.Thread):
+    def __init__(self, name, function, args=None):
+        threading.Thread.__init__(self)
+        self.name = name
+        self.function = function
+        self.args = args
+
+    def run(self):
+
+        # target function of the thread class
+        try:
+            if self.args:
+                self.function(self.args)
+            else:
+                self.function()
+        finally:
+            print('ended')
+
+    def get_id(self):
+
+        # returns id of the respective thread
+        if hasattr(self, '_thread_id'):
+            return self._thread_id
+        for id_, thread in threading._active.items():
+            if thread is self:
+                return id_
+
+    def raise_exception(self):
+        thread_id = self.get_id()
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id,
+                                                         ctypes.py_object(SystemExit))
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print('Exception raise failure')
