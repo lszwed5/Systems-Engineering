@@ -1,9 +1,11 @@
 import csv
 import ctypes
+from datetime import datetime
 import threading
 import json
 import requests
 import paho.mqtt.client as mqtt
+import random
 
 
 class App:
@@ -37,6 +39,11 @@ class App:
         return data
 
     def send_data(self, data):
+        timestamp = datetime.now()
+        timestamp = str(timestamp.replace(microsecond=0))
+        choice = random.choice(list(data.keys()))
+        data = {timestamp: {choice: data[choice]}}
+
         match self.settings["protocol"]:
             case "HTTP":
                 endpoint = self.settings["target"] + str(self.settings["App_id"])
@@ -51,6 +58,7 @@ class App:
 
                 client.connect(broker, 1883)
                 client.publish(topic, str(data) + f"${self.settings['App_id']}")
+                print(topic, data, sep='\n')
                 client.disconnect()
 
 

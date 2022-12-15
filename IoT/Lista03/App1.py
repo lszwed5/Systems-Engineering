@@ -6,11 +6,11 @@ import json
 
 
 app = Flask(__name__)
-GENERATOR_NAME = 'App1'
+GENERATOR_NAME = 1
 PORT = 8000
 SERVER_NAME = f'{GENERATOR_NAME}:{PORT}'
+REGISTER_INFO = {"Generator name": GENERATOR_NAME, "Configuration URL": f'http://127.0.0.1:{PORT}/configuration/'}
 REGISTER_URL = 'http://127.0.0.1:5000/register/'
-REGISTER_INFO = {"Generator name": GENERATOR_NAME, "Configuration URL": f'http://127.0.0.1:8000/configuration/'}
 RUNNING = False
 
 
@@ -62,3 +62,10 @@ if __name__ == '__main__':
 #     sys.exit(1)
 # configuration = sys.argv[1]
 # generator.configure(configuration)
+
+"""
+
+Middleman nie działa jako wątek
+Generator 2 razy prosi o podanie nazwy i portu
+
+"""

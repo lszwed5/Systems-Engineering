@@ -4,8 +4,8 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField, StringField, IntegerField, BooleanField
 from wtforms.validators import InputRequired
 import json
-import threading
-from middleman import main
+# import threading
+# from middleman import main
 
 
 app = Flask(__name__)
@@ -35,6 +35,17 @@ class ConfigureForm(FlaskForm):
     submit = SubmitField('Apply')
 
 
+class ConfigureAggregationForm(FlaskForm):
+
+    generator_id = SelectField(u'Generator ID: ', choices=CONNECTED_GENERATORS.keys())
+
+    start_time = SelectField('Time span',
+                             choices=[("All", "All"), (2592000, "30 Days"), (604800, "Week"),
+                                      (86400, "Day"), (3600, "Hour"), (1800, "30 minutes"), (900, "15 minutes")])
+
+    submit = SubmitField('View data')
+
+
 @app.route("/")
 def index():
     return redirect(url_for('home'))
@@ -50,8 +61,8 @@ def home():
 def register():
     if request.method == 'POST':
         data = json.loads(request.json)
-        CONNECTED_GENERATORS[data["Generator name"]] = data["Configuration URL"]
-        CONFIGURATIONS[data["Generator name"]] = {
+        CONNECTED_GENERATORS[str(data["Generator name"])] = data["Configuration URL"]
+        CONFIGURATIONS[str(data["Generator name"])] = {
             "App_id": data["Generator name"],
             "Configuration URL": data["Configuration URL"],
             "datasource": None,
@@ -64,20 +75,6 @@ def register():
         print(CONNECTED_GENERATORS)
 
     return "Connected successfully"
-
-
-@app.route("/fileupload/<src>", methods=["POST"])
-def file_upload(src):
-    if request.method == 'POST':
-        data = json.loads(request.json)
-        if type(data) != dict:
-            data = eval(data)
-
-        save_path = f"server_files/src-{src}.json"
-        with open(save_path, "w", encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
-
-        return "Upload successful"
 
 
 @app.route("/getfile/<file_nr>", methods=["get"])
@@ -113,7 +110,7 @@ def configure(id_):
     if form.validate_on_submit():
         configuration = {
             "App_id": form.generator_id.data,
-            "Configuration URL": CONNECTED_GENERATORS['App1'],
+            "Configuration URL": CONNECTED_GENERATORS[form.generator_id.data],
             "datasource": form.datasource.data,
             "protocol": form.protocol.data,
             "target": form.target.data,
@@ -123,7 +120,7 @@ def configure(id_):
         }
 
         send = requests.post(configuration["Configuration URL"], json=json.dumps(configuration))
-        print(send.text)
+        # print(send.text)
         # print(configuration)
 
         CONFIGURATIONS[str(configuration["App_id"])] = configuration
@@ -141,7 +138,25 @@ def successful():
     return render_template('successful_configuration.html')
 
 
+@app.route('/configure_aggregation/', methods=['GET', 'POST'])
+def configure_aggregation():
+    form = ConfigureAggregationForm()
+
+    if form.validate_on_submit():
+        configuration = {
+            "App_id": form.generator_id.data,
+            "Time span": form.start_time.data
+        }
+
+        send = requests.post(f'http://localhost:5001//configure/{configuration["App_id"]}',
+                             json=json.dumps(configuration))
+
+        return send.json()
+
+    return render_template('configure_aggregator.html', form=form)
+
+
 if __name__ == '__main__':
-    t1 = threading.Thread(target=main, daemon=True)
-    t1.start()
+    # t1 = threading.Thread(target=main, daemon=True)
+    # t1.start()
     app.run(debug=True)

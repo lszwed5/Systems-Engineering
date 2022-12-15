@@ -28,9 +28,9 @@
                 <div class="grid justify-center">
                     <p style="text-align: center">{{ data["configurations"][key]["App_id"] }}</p>
                     {% if data["configurations"][key]["is_active"] %}
-                    <p style="color: lime;">Online </p>
+                    <p style="color: lime; text-align: center">Online </p>
                     {% else %}
-                    <p style="color: red;">Offline </p>
+                    <p style="color: red; text-align: center">Offline </p>
                     {% endif %}
                 </div>
             </div>
@@ -41,6 +41,11 @@
     <div class="grid justify-center">
         <a href="{{ url_for('configure', id_='all') }}">
             <button class="mt-12 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change configurations</button>
+        </a>
+    </div>
+    <div class="grid justify-center">
+        <a href="{{ url_for('configure_aggregation') }}">
+            <button class="mt-12 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change aggregation configurations</button>
         </a>
     </div>
 </body>
