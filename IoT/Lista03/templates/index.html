@@ -38,14 +38,19 @@
         {% endfor %}
         </div>
     </div>
-    <div class="grid justify-center">
+    <div class="mt-12 grid justify-center">
         <a href="{{ url_for('configure', id_='all') }}">
-            <button class="mt-12 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change configurations</button>
+            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change configurations</button>
         </a>
     </div>
-    <div class="grid justify-center">
+    <div class="mt-12 grid justify-center">
         <a href="{{ url_for('configure_aggregation') }}">
-            <button class="mt-12 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change aggregation configurations</button>
+            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change aggregation configurations</button>
+        </a>
+    </div>
+    <div class="mt-12 grid justify-center">
+        <a href="{{ url_for('configure_filtration1') }}">
+            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change filter configurations</button>
         </a>
     </div>
 </body>

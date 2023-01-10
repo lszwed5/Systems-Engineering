@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField, StringField, IntegerField, BooleanField
 from wtforms.validators import InputRequired
@@ -44,6 +44,15 @@ class ConfigureAggregationForm(FlaskForm):
                                       (86400, "Day"), (3600, "Hour"), (1800, "30 minutes"), (900, "15 minutes")])
 
     submit = SubmitField('View data')
+
+
+class ConfigureFiltrationForm1(FlaskForm):
+
+    source_url = StringField('Source of data: ', validators=[InputRequired()])
+
+    target_url = StringField('Target URL (optional): ')
+
+    submit = SubmitField('Next')
 
 
 @app.route("/")
@@ -154,6 +163,48 @@ def configure_aggregation():
         return send.json()
 
     return render_template('configure_aggregator.html', form=form)
+
+
+@app.route('/configure_filtration-source/', methods=['GET', 'POST'])
+def configure_filtration1():
+    form = ConfigureFiltrationForm1()
+
+    if form.validate_on_submit():
+        session['path'] = form.source_url.data
+        session['target'] = form.target_url.data
+        try:
+            with open(session['path'], "r") as f:
+                data = json.load(f)
+                data = data[list(data.keys())[0]]
+                return redirect(url_for('configure_filtration', data=data))
+        except FileNotFoundError:
+            return "404 - File not found"
+
+    return render_template('configure_filter-source.html', form=form)
+
+
+@app.route('/configure_filtration/', methods=['GET', 'POST'])
+def configure_filtration():
+    if request.method == 'GET':
+        data = eval(request.args['data'])
+        choices = list(dict(data[list(data.keys())[0]]).keys())
+        return render_template('configure_filter.html', choices=choices)
+
+    if request.method == 'POST':
+        result = list(request.form.keys())
+        print(result)
+
+        configuration = {
+            "path": session['path'],
+            "target": session['target'],
+            "fields": result
+        }
+
+        send = requests.post(f'http://localhost:5002/filtrate/', json=json.dumps(configuration))
+
+        return send.json()
+
+    return "How on Earth did You even get here"
 
 
 if __name__ == '__main__':

@@ -5,22 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Aggregation Configuration</title>
+    <title>Filter Configuration</title>
 </head>
 <body class="bg-black bg-cover height-auto text-slate-300">
     <a href="{{ url_for('home') }}"><button class="absolute top-0 ml-2 mt-2 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Home</button></a>
     <div>
         <div class="grid justify-center text-6xl mt-6">
-            <h1>Aggregation Configuration Page</h1>
+            <h1>Filtration Configuration Page</h1>
         </div>
 
         <div class="grid object-center bg-cover m-auto justify-center mt-16 mb-16">
             <form method="post" action="" class="grid justify-center w-full">
                 {{ form.csrf_token }}
-                {{ form.generator_id.label(class="grid justify-center mb-3") }}
-                {{ form.generator_id(class="rounded-md min-w-60 text-black text-center") }} <br>
-                {{ form.start_time.label(class="grid justify-center mb-3") }}
-                {{ form.start_time(class="rounded-md min-w-60 text-black text-center w-56") }} <br>
+                {{ form.source_url.label(class="grid justify-center mb-3") }}
+                {{ form.source_url(class="rounded-md min-w-[325px] text-black text-center") }} <br>
+                {{ form.target_url.label(class="grid justify-center mb-3") }}
+                {{ form.target_url(class="rounded-md min-w-[325px] text-black text-center") }} <br>
                 {{ form.submit(class="mt-3 mx-auto bg-[#006913] rounded-md py-3 px-3 hover:bg-[#00911b] hover:cursor-pointer") }}
             </form>
         </div>
