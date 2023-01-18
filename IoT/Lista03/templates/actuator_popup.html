@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Actuator action choice</title>
+</head>
+<body class="bg-black bg-cover height-auto px-6 text-slate-300">
+    <a href="{{ url_for('home') }}">
+        <button class="absolute top-0 ml-2 mt-2 bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Home</button>
+    </a>
+  <div class="grid justify-center text-8xl mt-6">
+    <h1>Actuator action choice page</h1>
+  </div>
+    <div class="mt-12 grid justify-center">
+        <a href="{{ url_for('configure', id_=id_) }}">
+            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change configuration</button>
+        </a>
+    </div>
+    <div class="mt-12 grid justify-center">
+        <a href="http://127.0.0.1:5003/get_temperature/">
+            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">View current temperature</button>
+        </a>
+    </div>
+</body>
+</html>
