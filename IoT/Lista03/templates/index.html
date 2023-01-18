@@ -13,7 +13,7 @@
     </div>
     <div>
         <div>
-            <h3 class="text-2xl mt-6">Connected generators:</h3>
+            <h3 class="text-2xl mt-6">Connected devices:</h3>
         </div>
         <div class="flex">
             {% if data["configurations"].keys()|length == 0 %}
@@ -22,8 +22,13 @@
             </div>            
             {% endif %}
             {% for key in data["configurations"].keys() %}
+            {% if data["configurations"][key]['type'] == 'generator' %}
             <a href="{{ url_for('configure', id_=data['configurations'][key]['App_id']|string) }}">
-            <!-- <div class="bg-blue-800 w-64 mt-4 rounded-md ml-6 py-3 px-3"> -->
+            {% endif %}
+            {% if data["configurations"][key]['type'] == 'actuator' %}
+            <a href="{{ url_for('choose_actuator_action', id_=data['configurations'][key]['App_id']|string) }}">
+            {% endif %}
+<!--             <div class="bg-blue-800 w-64 mt-4 rounded-md ml-6 py-3 px-3">-->
             <div class="bg-gray-800 hover:bg-gray-700 w-64 mt-4 rounded-md ml-6 py-3 px-3">
                 <div class="grid justify-center">
                     <p style="text-align: center">{{ data["configurations"][key]["App_id"] }}</p>
@@ -38,11 +43,11 @@
         {% endfor %}
         </div>
     </div>
-    <div class="mt-12 grid justify-center">
-        <a href="{{ url_for('configure', id_='all') }}">
-            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change configurations</button>
-        </a>
-    </div>
+<!--    <div class="mt-12 grid justify-center">-->
+<!--        <a href="{{ url_for('configure', id_='all') }}">-->
+<!--            <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change configurations</button>-->
+<!--        </a>-->
+<!--    </div>-->
     <div class="mt-12 grid justify-center">
         <a href="{{ url_for('configure_aggregation') }}">
             <button class="bg-[#006913] rounded-md py-1 px-1 hover:bg-[#00911b]">Change aggregation configurations</button>

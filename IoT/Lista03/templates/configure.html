@@ -22,8 +22,16 @@
                 {{ form.csrf_token }}
                 {{ form.generator_id.label(class="grid justify-center mb-3") }}
                 {{ form.generator_id(class="rounded-md min-w-60 text-black text-center") }} <br>
+
+                {% if type == "generator" %}
                 {{ form.datasource.label(class="grid justify-center mb-3") }}
                 {{ form.datasource(class="rounded-md text-black text-center") }} <br>
+                {% endif %}
+                {% if type == "actuator" %}
+                {{ form.power.label(class="grid justify-center mb-3") }}
+                {{ form.power(class="rounded-md text-black text-center") }} <br>
+                {% endif %}
+
                 {{ form.protocol.label(class="grid justify-center mb-3") }}
                 {{ form.protocol(class="rounded-md text-black text-center") }} <br>
                 {{ form.target.label(class="grid justify-center mb-3") }}

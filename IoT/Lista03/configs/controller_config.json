@@ -1,0 +1,5 @@
+{
+  "ROOM_TEMPERATURE": 25,
+  "TOP_LIMIT": 30,
+  "BOTTOM_LIMIT": 20
+}

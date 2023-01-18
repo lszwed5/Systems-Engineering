@@ -12,7 +12,7 @@ class App:
     """A template for IoT L3 application"""
 
     def __init__(self):
-        self.settings = None
+        self.settings = {}
 
     def configure_from_file(self, filename):
         with open(filename, "r") as f:

@@ -20,7 +20,10 @@ class ConfigureForm(FlaskForm):
 
     generator_id = SelectField(u'Generator ID: ', choices=CONNECTED_GENERATORS.keys())
 
-    datasource = StringField('Source of data: ', validators=[InputRequired()])
+    # datasource = StringField('Source of data: ', validators=[InputRequired()])
+    datasource = StringField('Source of data: ')
+
+    power = IntegerField('Power of the radiator in Watts: ', default=0)
 
     protocol = SelectField('Protocol: ', choices=['HTTP', 'MQTT'])
 
@@ -48,7 +51,8 @@ class ConfigureAggregationForm(FlaskForm):
 
 class ConfigureFiltrationForm1(FlaskForm):
 
-    source_url = StringField('Source of data: ', validators=[InputRequired()])
+    # source_url = StringField('Source of data: ', validators=[InputRequired()])
+    source_url = SelectField(u'Source of data: ', choices=CONNECTED_GENERATORS.keys())
 
     target_url = StringField('Target URL (optional): ')
 
@@ -75,11 +79,13 @@ def register():
             "App_id": data["Generator name"],
             "Configuration URL": data["Configuration URL"],
             "datasource": None,
+            "power": 0,
             "protocol": None,
             "target": None,
             "MQTT_topic": None,
             "frequency": None,
-            "is_active": False
+            "is_active": False,
+            "type": data["Type"]
         }
         print(CONNECTED_GENERATORS)
 
@@ -97,6 +103,11 @@ def getfile(file_nr):
     return jsonify(data)
 
 
+@app.route("/actuator_action_choice/<id_>", methods=["get"])
+def choose_actuator_action(id_):
+    return render_template('actuator_popup.html', id_=id_)
+
+
 @app.route("/configuration/<id_>", methods=['GET', 'POST'])
 def configure(id_):
     form = ConfigureForm()
@@ -104,8 +115,12 @@ def configure(id_):
     if id_ != 'all':
         form.generator_id.choices = [id_]
         print(CONFIGURATIONS)
-        if CONFIGURATIONS[str(id_)]["datasource"]:
-            form.datasource.default = CONFIGURATIONS[str(id_)]["datasource"]
+        if CONFIGURATIONS[str(id_)]["type"] == "generator":
+            if CONFIGURATIONS[str(id_)]["datasource"]:
+                form.datasource.default = CONFIGURATIONS[str(id_)]["datasource"]
+        elif CONFIGURATIONS[str(id_)]["type"] == "actuator":
+            # form.datasource.render_kw = {'disabled': 'disabled'}
+            form.power.default = CONFIGURATIONS[str(id_)]["power"]
         if CONFIGURATIONS[str(id_)]["protocol"]:
             form.protocol.default = CONFIGURATIONS[str(id_)]["protocol"]
         if CONFIGURATIONS[str(id_)]["target"]:
@@ -121,11 +136,13 @@ def configure(id_):
             "App_id": form.generator_id.data,
             "Configuration URL": CONNECTED_GENERATORS[form.generator_id.data],
             "datasource": form.datasource.data,
+            "power": form.power.data,
             "protocol": form.protocol.data,
             "target": form.target.data,
             "MQTT_topic": form.mqtt_topic.data,
             "frequency": form.frequency.data,
-            "is_active": form.is_active.data
+            "is_active": form.is_active.data,
+            "type": CONFIGURATIONS[str(id_)]["type"]
         }
 
         send = requests.post(configuration["Configuration URL"], json=json.dumps(configuration))
@@ -139,7 +156,7 @@ def configure(id_):
 
     form.process()
     # print(form.errors)
-    return render_template('configure.html', form=form)
+    return render_template('configure.html', form=form, type=CONFIGURATIONS[str(id_)]["type"])
 
 
 @app.route('/configuration/success/')
@@ -170,7 +187,7 @@ def configure_filtration1():
     form = ConfigureFiltrationForm1()
 
     if form.validate_on_submit():
-        session['path'] = form.source_url.data
+        session['path'] = f"server_files/src-{form.source_url.data}.json"
         session['target'] = form.target_url.data
         try:
             with open(session['path'], "r") as f:

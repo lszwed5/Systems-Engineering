@@ -9,7 +9,8 @@ app = Flask(__name__)
 GENERATOR_NAME = "Traffic"
 PORT = 8001
 SERVER_NAME = f'{GENERATOR_NAME}:{PORT}'
-REGISTER_INFO = {"Generator name": GENERATOR_NAME, "Configuration URL": f'http://127.0.0.1:{PORT}/configuration/'}
+REGISTER_INFO = {"Generator name": GENERATOR_NAME, "Configuration URL": f'http://127.0.0.1:{PORT}/configuration/',
+                 "Type": "generator"}
 REGISTER_URL = 'http://127.0.0.1:5000/register/'
 RUNNING = False
 
