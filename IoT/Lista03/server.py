@@ -4,6 +4,9 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField, StringField, IntegerField, BooleanField
 from wtforms.validators import InputRequired
 import json
+import pandas as pd
+import plotly
+import plotly.express as px
 # import threading
 # from middleman import main
 
@@ -222,6 +225,36 @@ def configure_filtration():
         return send.json()
 
     return "How on Earth did You even get here"
+
+
+@app.route('/data_visualisation/<file_id>')
+def visualise_data(file_id):
+    path = f"server_files/src-{file_id}.json"
+    try:
+        with open(path, "r") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        return "404 - File not found"
+
+    dates = list(data.keys())
+    dates.reverse()
+    temperatures = []
+
+    [temperatures.append(value['temperature']) for value in list(data.values())].reverse()
+
+    df = pd.DataFrame(dict(
+        x=dates,
+        y=temperatures
+    ))
+
+    fig = px.line(df, x='x', y='y')
+    fig.update_layout(xaxis_title='Date and time', yaxis_title='Temperature (degrees C)')
+
+    # Create graphJSON
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    # Use render_template to pass graphJSON to html
+    return render_template('plot.html', graphJSON=graphJSON, file_id=file_id)
 
 
 if __name__ == '__main__':
