@@ -17,7 +17,7 @@ plt.show()
 X, Y = dataset
 
 
-sq_mod = PolynomialRegression(40)
+sq_mod = PolynomialRegression(2)
 sq_mod.fit(X, Y)
 sq_mod.show_params()
 sq_mod.plot_regression(X, Y)

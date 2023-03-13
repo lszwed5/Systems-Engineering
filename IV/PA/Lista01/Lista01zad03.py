@@ -10,9 +10,8 @@ for v in V.__reversed__():
     G.add_node(v)
 
 for i in range(1, num_of_nodes + 1):
-    for j in range(1, num_of_nodes + 1):
-        if i != j:
-            G.add_edge(i, j)
+    for j in range(i + 1, num_of_nodes + 1):
+        G.add_edge(i, j)
 
 nx.draw_circular(G, with_labels=True)
 plt.axis('square')
