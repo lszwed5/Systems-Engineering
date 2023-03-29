@@ -19,7 +19,7 @@ for char in inp:
     q = config["d"][q][char]
     print(q)
 
-if q == config["F"]:
+if q in config["F"]:
     print("\nAccepted")
 else:
     print("\nNot accepted")
