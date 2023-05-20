@@ -1,9 +1,10 @@
 {
     "App_id": 1,
+    "Configuration URL":  "http://127.0.0.1:8000/configuration/",
     "datasource": "datasets/trafficMetaData.csv",
     "protocol": "HTTP",
     "target": "http://localhost:5000/fileupload/",
     "MQTT_topic": "",
-    "frequency": 60,
+    "frequency": 2,
     "is_active": "True"
 }

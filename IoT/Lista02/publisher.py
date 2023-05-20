@@ -1,5 +1,4 @@
 import time
-
 import paho.mqtt.client as mqtt
 from psutil import sensors_battery
 from datetime import datetime
