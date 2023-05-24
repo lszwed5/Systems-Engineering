@@ -47,7 +47,6 @@ def radix_sort(matrix):
 size = [int(x) for x in
         input("Enter the size of the matrix as MxN: ").split("x")]
 matrix = [[0] * size[1]] * size[0]
-print(matrix)
 print("Enter the matrix to be sorted:")
 for M in range(size[0]):
     matrix[M] = [int(val) for val in input().split(" ")]

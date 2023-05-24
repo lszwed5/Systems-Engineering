@@ -8,6 +8,7 @@ interval = 10
 offset = 0
 offset_step = 0.1
 fps = 1000
+running = False
 
 
 def generate_x_y():
@@ -17,17 +18,19 @@ def generate_x_y():
 
 
 def move_left(event):
-    global offset
-    offset = offset - interval
-    update(offset)
-    plt.draw()
+    global offset, running
+    if not running:
+        offset = offset - interval
+        update(offset)
+        plt.draw()
 
 
 def move_right(event):
-    global offset
-    offset = offset + interval
-    update(offset)
-    plt.draw()
+    global offset, running
+    if not running:
+        offset = offset + interval
+        update(offset)
+        plt.draw()
 
 
 def reset(event):
@@ -38,25 +41,32 @@ def reset(event):
 
 
 def stop(event):
+    global running
+    running = False
     animation.event_source.stop()
 
 
 def resume(event):
+    global running
+    running = True
     animation.event_source.start()
 
 
 def save(event):
-    plt.savefig('plot.png')
+    global running
+    if not running:
+        plt.savefig('plot.png')
 
 
 def update(frame):
-    global offset, x, y
+    global offset, x, y, running
     ax.clear()
     ax.set_xlim(offset, offset + 10)
     ax.set_ylim(-1.2, 1.2)
     line, = ax.plot([], [], lw=2)
     line.set_data(x, y)
-    offset += offset_step
+    if running:
+        offset += offset_step
 
 
 x, y = generate_x_y()
