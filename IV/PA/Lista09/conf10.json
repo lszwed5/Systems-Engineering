@@ -1,62 +1,62 @@
 {
   "Robot 0": {
-    "type": "AFV",
-    "price": 1018.33,
-    "range": 87,
-    "camera": false
+    "type": "ASV",
+    "price": 4412.76,
+    "range": 9,
+    "camera": true
   },
   "Robot 1": {
     "type": "ASV",
-    "price": 6389.13,
-    "range": 97,
-    "camera": false
+    "price": 5378.45,
+    "range": 57,
+    "camera": true
   },
   "Robot 2": {
-    "type": "AGV",
-    "price": 6556.76,
-    "range": 26,
+    "type": "ASV",
+    "price": 4462.58,
+    "range": 68,
     "camera": false
   },
   "Robot 3": {
-    "type": "ASV",
-    "price": 6571.81,
-    "range": 49,
-    "camera": false
+    "type": "AGV",
+    "price": 5667.42,
+    "range": 99,
+    "camera": true
   },
   "Robot 4": {
-    "type": "AGV",
-    "price": 9916.45,
-    "range": 74,
+    "type": "ASV",
+    "price": 3753.44,
+    "range": 26,
     "camera": false
   },
   "Robot 5": {
-    "type": "AUV",
-    "price": 9137.62,
-    "range": 23,
+    "type": "ASV",
+    "price": 6700.74,
+    "range": 99,
     "camera": false
   },
   "Robot 6": {
     "type": "AGV",
-    "price": 5349.77,
-    "range": 79,
+    "price": 4075.95,
+    "range": 6,
     "camera": true
   },
   "Robot 7": {
-    "type": "AGV",
-    "price": 8087.83,
-    "range": 83,
-    "camera": true
+    "type": "ASV",
+    "price": 7517.95,
+    "range": 85,
+    "camera": false
   },
   "Robot 8": {
-    "type": "AUV",
-    "price": 6622.7,
+    "type": "ASV",
+    "price": 2532.01,
     "range": 83,
     "camera": true
   },
   "Robot 9": {
-    "type": "AGV",
-    "price": 28.93,
-    "range": 47,
-    "camera": false
+    "type": "AFV",
+    "price": 1188.48,
+    "range": 11,
+    "camera": true
   }
 }
