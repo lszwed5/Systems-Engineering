@@ -2,19 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.widgets import Button
+import neurokit2 as nk
 
 
-interval = 10
+duration = 100
+sampling_rate = 1000
+samples = duration * sampling_rate
+interval = 5
 offset = 0
 offset_step = 0.1
 fps = 1000
 running = False
-
-
-def generate_x_y():
-    x = np.linspace(-200, 1000, 12000)
-    y = np.cos(x)
-    return x, y
 
 
 def move_left(event):
@@ -55,25 +53,52 @@ def resume(event):
 def save(event):
     global running
     if not running:
+        scroll_left_button.ax.set_visible(False)
+        reset_button.ax.set_visible(False)
+        resume_button.ax.set_visible(False)
+        stop_button.ax.set_visible(False)
+        save_button.ax.set_visible(False)
+        scroll_right_button.ax.set_visible(False)
+
         plt.savefig('plot.png')
+
+        scroll_left_button.ax.set_visible(True)
+        reset_button.ax.set_visible(True)
+        resume_button.ax.set_visible(True)
+        stop_button.ax.set_visible(True)
+        save_button.ax.set_visible(True)
+        scroll_right_button.ax.set_visible(True)
 
 
 def update(frame):
-    global offset, x, y, running
+    global offset, x_data, y_data, running
     ax.clear()
-    ax.set_xlim(offset, offset + 10)
-    ax.set_ylim(-1.2, 1.2)
-    line, = ax.plot([], [], lw=2)
-    line.set_data(x, y)
+    ax.set_xlim(offset, offset + interval)
+    ax.set_ylim(np.min(y_data), np.max(y_data))
+    line, = ax.plot(x_data, lw=2)
+    line.set_data(x_data, y_data)
+    ax.set_title(distance_text, loc="center")
     if running:
         offset += offset_step
 
 
-x, y = generate_x_y()
+y_data = nk.ecg_simulate(duration=duration, sampling_rate=sampling_rate,
+                         method="simple")
 
 fig, ax = plt.subplots()
-ax.set_xlim(0, 3 + 10)
-line, = ax.plot([], [], lw=2)
+x_data = np.linspace(0, duration, samples)
+line, = ax.plot(x_data, lw=2)
+ax.set_xlim(0, 5)
+ax.set_ylim(np.min(y_data), np.max(y_data))
+
+_, rpeaks = nk.ecg_peaks(y_data, sampling_rate=sampling_rate)
+distances = np.diff(rpeaks['ECG_R_Peaks']) / 100
+
+max_distance = np.max(distances) / 8
+min_distance = np.min(distances) / 8
+diff_distance = max_distance - min_distance
+
+distance_text = f"Max distance: {max_distance:.3f}  Min distance: {min_distance:.3f}  Difference: {diff_distance:.3f} "
 
 
 scroll_left_button_ax = plt.axes([0.1, 0.06, 0.1, 0.05])
@@ -102,9 +127,6 @@ scroll_right_button.on_clicked(move_right)
 
 plt.subplots_adjust(bottom=0.2)
 
-
 animation = FuncAnimation(fig, update, frames=fps, interval=interval)
-ax.set_title("Interactive cos(x) plot")
-ax.set_xlabel("X")
-ax.set_ylabel("Y")
+ax.set_title(distance_text, loc="center")
 plt.show()
